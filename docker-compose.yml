@@ -4,7 +4,7 @@ services:
   api:
     container_name: sixpack-api
     build: .
-    command: gunicorn --access-logfile - -w 8 --worker-class=gevent sixpack.server:start
+    command: gunicorn --access-logfile - -w 8 -b 0.0.0.0:5000 sixpack.server:start
     environment:
       SIXPACK_CONFIG_ENABLED: true
       SIXPACK_CONFIG_REDIS_PORT: 6379
@@ -21,7 +21,7 @@ services:
   web:
     container_name: sixpack-web
     build: .
-    command: gunicorn --access-logfile - -w 2 --worker-class=gevent sixpack.web:start
+    command: gunicorn --access-logfile - -w 2 -b 0.0.0.0:5000 sixpack.web:start
     environment:
       SIXPACK_CONFIG_ENABLED: true
       SIXPACK_CONFIG_REDIS_PORT: 6379
@@ -29,7 +29,7 @@ services:
       SIXPACK_CONFIG_REDIS_PASSWORD: redis
       SIXPACK_CONFIG_REDIS_PREFIX: sixpack
     ports:
-      - 8001:5001
+      - 8001:5000
     depends_on:
       - redis
     links:
@@ -38,6 +38,6 @@ services:
   redis:
     image: redis:6-alpine
     restart: "no"
-    # ports:
-      # - 6380:6379
+    ports:
+      - 6380:6379
     command: redis-server --requirepass redis
