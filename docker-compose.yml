@@ -3,6 +3,7 @@ version: "3.9"
 services:
   api:
     container_name: sixpack-api
+    restart: "always"
     build: .
     command: gunicorn --access-logfile - -w 8 -b 0.0.0.0:5000 sixpack.server:start
     environment:
@@ -20,6 +21,7 @@ services:
 
   web:
     container_name: sixpack-web
+    restart: "always"
     build: .
     command: gunicorn --access-logfile - -w 2 -b 0.0.0.0:5000 sixpack.web:start
     environment:
@@ -37,7 +39,7 @@ services:
 
   redis:
     image: redis:6-alpine
-    restart: "no"
+    restart: "always"
     ports:
       - 6380:6379
     command: redis-server --requirepass redis
